@@ -2,9 +2,20 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Checkout') {
             steps {
-                echo 'Hello World'
+                git branch: 'main',
+                url: https://github.com/jhkim-09/source-maven-java-spring-hello-webapp.git
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://192.168.56.102:8080')], contextPath: null, war: 'target/hello-world.war'
             }
         }
     }
