@@ -6,7 +6,7 @@ pipeline {
             agent any
             steps {
                 git branch: 'main',
-                url: 'https://github.com/jhkim-09/source-maven-java-spring-hello-webapp.git'
+                url: 'https://github.com/jhkim-09/pipeline.git'
             }
         }
         stage('Build') {
@@ -26,15 +26,15 @@ pipeline {
         stage('Image Tag') {
             agent any
             steps {
-               sh 'docker image tag tomcat:hello kimjuhyo/tomcat:v1'
+               sh 'docker image tag tomcat:hello kimjuhyo/tomcat:$BUILD_NUMBER'
                sh 'docker image tag tomcat:hello kimjuhyo/tomcat:latest'
             }
         }
         stage('Image Push') {
             agent any
             steps {
-               withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
-                   sh 'docker image push kimjuhyo/tomcat:v1'
+               withDockerRegistry(credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/') {
+                   sh 'docker image push kimjuhyo/tomcat:$BUILD_NUMBER'
                    sh 'docker image push kimjuhyo/tomcat:latest'
                }
             }
